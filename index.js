@@ -24,12 +24,21 @@ const connection = mysql.createConnection(process.env.DATABASE_URL);
 console.log('Connected to PlanetScale!');
 
 app.post('/logins', function (req, res) {
-  const { username, password } = req.body;
+  const { username, password, email } = req.body;
   connection.query(
-    'SELECT * FROM Users WHERE Username=' +
-      `"${username}" AND Password="${password}"`,
+    'SELECT * FROM user WHERE username=?',
+    [username],
     (err, result) => {
-      if (result) return res.json({ status: 200 });
+      if (err) {
+        return res.status(400);
+      }
+      if (result.length === 0) {
+        return res.json({ status: 'error' });
+      }
+      if (password === result[0].password) {
+        return res.json({ status: 200, result: result[0] });
+      }
+      console.log(result);
     }
   );
 });
@@ -45,7 +54,8 @@ app.post('/logins', function (req, res) {
 // });
 
 app.post('/signup', (req, res) => {
-  const sql = 'INSERT INTO Users (`username`, `password`, `email`) VALUES (?)';
+  const sql =
+    'INSERT INTO user (`username`, `password`, `email`) VALUES (?,?,?)';
   const values = [req.body.username, req.body.password, req.body.email];
   connection.query(sql, [values], (err, result) => {
     if (err) {
