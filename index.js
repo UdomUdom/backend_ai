@@ -54,14 +54,16 @@ app.post('/logins', function (req, res) {
 // });
 
 app.post('/signup', (req, res) => {
-  const sql = 'INSERT INTO user (`username`, `password`, `email`) VALUES (?)';
-  const values = [req.body.username, req.body.password, req.body.email];
-  connection.query(sql, [values], (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.json({ message: 'Error in Node' });
-    } else {
-      return res.json(result);
+  connection.query(
+    'INSERT INTO user (`username`, `password`, `email`) VALUES ?',
+    [req.body.username, req.body.password, req.body.email],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.json({ message: 'Error in Node' });
+      } else {
+        return res.json(result);
+      }
     }
-  });
+  );
 });
