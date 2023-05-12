@@ -55,7 +55,7 @@ app.post('/logins', function (req, res) {
 
 app.post('/signup', (req, res) => {
   connection.query(
-    'INSERT INTO user (`username`, `password`, `email`) VALUES ?,?,?',
+    'INSERT INTO user (`username`, `password`, `email`) VALUES (?,?,?)',
     [req.body.username, req.body.password, req.body.email],
     (err, result) => {
       if (err) {
